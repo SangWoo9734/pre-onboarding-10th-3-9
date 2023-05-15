@@ -1,9 +1,9 @@
-import { headerStyle, titleStyle } from '../style/headerStyle';
+import '../style/Header.css';
 
 const Header = () => {
   return (
-    <header style={headerStyle}>
-      <h1 style={titleStyle}>Toodos</h1>
+    <header className="header">
+      <h1 className="title">Toodos</h1>
     </header>
   );
 };
