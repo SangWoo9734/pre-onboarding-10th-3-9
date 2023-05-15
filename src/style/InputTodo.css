@@ -1,0 +1,66 @@
+.form-container {
+  width: 100%;
+  margin-bottom: 20px;
+  padding: 15px 16px;
+  border: 1px solid #dedede;
+  display: flex;
+  border-radius: 6px;
+
+  &:hover {
+    padding: 13px 14px;
+    border-width: 3px;
+  }
+
+  &:focus-within {
+    border-color: #9f9f9f;
+  }
+}
+
+.input-text {
+  font-size: 1rem;
+  font-weight: 400;
+  width: calc(100% - 20px);
+  padding: 0 10px;
+  border-radius: calc(0.5 * 100px);
+  background-color: transparent;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.input-icon {
+  font-size: 20px;
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+  display: flex;
+  align-self: center;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.input-submit {
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.input-text,
+.input-submit {
+  outline: none;
+  border: none;
+}
+
+.input-container {
+  position: relative;
+  z-index: 999;
+}
