@@ -1,0 +1,3 @@
+const DEBOUNCE_DELAY_IN_MS = 500;
+
+export { DEBOUNCE_DELAY_IN_MS };
