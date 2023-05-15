@@ -1,25 +1,26 @@
 import '../style/InputTodo.css';
 
-import { FaPlusCircle, FaSpinner } from 'react-icons/fa';
-import { useCallback, useEffect, useState } from 'react';
+import { FaPlusCircle } from 'react-icons/fa';
+import { BiSearch } from 'react-icons/bi';
+import { ImSpinner8 } from 'react-icons/im';
+
+import { useCallback, useEffect } from 'react';
 
 import { createTodo } from '../api/todo';
 import useFocus from '../hooks/useFocus';
 import { TodoType } from '../@types';
 import AutoComplete from './AutoComplete';
+import { useSearchDispatch, useSearchState } from '../context/SearchContext';
 
 interface Props {
   setTodos: React.Dispatch<React.SetStateAction<TodoType[]>>;
 }
 
 const InputTodo = ({ setTodos }: Props) => {
-  const [inputText, setInputText] = useState('');
-  const [isAutoCompleteOpen, setIsAutoCompleteOpen] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const { ref, setFocus } = useFocus();
+  const { userInput, autoCompleteIsOpen, isLoading } = useSearchState();
+  const { onChangeUserInput, changeLoading } = useSearchDispatch();
 
-  // auto-complete
-  const [isShowAutoCompleteList, setIsShowAutoCompleteList] = useState<boolean>(false);
+  const { ref, setFocus } = useFocus();
 
   useEffect(() => {
     setFocus();
@@ -28,12 +29,11 @@ const InputTodo = ({ setTodos }: Props) => {
   const handleSubmit = useCallback(
     // eslint-disable-next-line consistent-return
     async (e: React.FormEvent<HTMLFormElement>) => {
-      console.log(111);
       try {
         e.preventDefault();
-        setIsLoading(true);
+        changeLoading(true);
 
-        const trimmed = inputText.trim();
+        const trimmed = userInput.trim();
         if (!trimmed) {
           return alert('Please write something');
         }
@@ -48,40 +48,35 @@ const InputTodo = ({ setTodos }: Props) => {
         console.error(error);
         alert('Something went wrong.');
       } finally {
-        setInputText('');
-        setIsLoading(false);
+        onChangeUserInput('');
+        changeLoading(false);
       }
     },
-    [inputText, setTodos],
+    [userInput, setTodos],
   );
 
   return (
     <div className="input-container">
       <form className="form-container" onSubmit={handleSubmit}>
+        <BiSearch className="input-icon" />
         <input
           className="input-text"
           placeholder="Add new todo..."
           ref={ref}
-          value={inputText}
-          onChange={(e) => setInputText(e.target.value)}
+          value={userInput}
+          onChange={(e) => onChangeUserInput(e.target.value)}
           disabled={isLoading}
         />
+
         {!isLoading ? (
           <button className="input-submit" type="submit">
             <FaPlusCircle className="btn-plus" />
           </button>
         ) : (
-          <FaSpinner className="spinner" />
+          <ImSpinner8 className="input-icon spinner" />
         )}
       </form>
-      {inputText.length > 0 && (
-        <AutoComplete
-          searchWord={inputText}
-          setSearchWord={setInputText}
-          isAutoCompleteOpen={isAutoCompleteOpen}
-          setIsAutoCompleteOpen={setIsAutoCompleteOpen}
-        />
-      )}
+      <AutoComplete />
     </div>
   );
 };
