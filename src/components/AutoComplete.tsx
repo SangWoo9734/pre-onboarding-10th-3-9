@@ -1,62 +1,34 @@
-import { useEffect, useState } from 'react';
-import '../style/AutoComplete.css';
+import { RxDotsHorizontal } from 'react-icons/rx';
+import { useSearchDispatch, useSearchState } from '../context/SearchContext';
 import AutoCompleteItem from './AutoCompleteItem';
-import { getSearchWordList } from '../api/search';
-import useSearchIndex from '../hooks/useSearchIndex';
 
-interface Props {
-  searchWord: string;
-  setSearchWord: React.Dispatch<React.SetStateAction<string>>;
-  isAutoCompleteOpen: boolean;
-  setIsAutoCompleteOpen: React.Dispatch<React.SetStateAction<boolean>>;
-}
+import '../style/AutoComplete.css';
 
-const AutoComplete = ({
-  searchWord,
-  setSearchWord,
-  isAutoCompleteOpen,
-  setIsAutoCompleteOpen,
-}: Props) => {
-  const { currentIndex, changeIndex, initIndex } = useSearchIndex();
-
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-
-  const [searchWordList, setSearchWordList] = useState<string[]>([]);
-
-  useEffect(() => {
-    setIsLoading(true);
-    (async () => {
-      const { data } = await getSearchWordList({ q: searchWord });
-      setSearchWordList(data.result);
-      setIsAutoCompleteOpen(true);
-    })();
-    setIsLoading(false);
-  }, [searchWord]);
+const AutoComplete = () => {
+  const { userInput, autoCompleteIndex, autoCompleteWordList, autoCompleteIsOpen, isLoading } =
+    useSearchState();
 
   return (
     <div>
-      {isAutoCompleteOpen && (
+      {userInput.length > 0 && autoCompleteIsOpen && (
         <ul className="auto-complete-container">
-          {searchWordList.length > 0 &&
-            searchWordList.map((searchResult: string, index: number) => {
+          {autoCompleteWordList.length > 0 ? (
+            autoCompleteWordList.map((searchResult: string, index: number) => {
               return (
                 <AutoCompleteItem
                   key={searchResult}
+                  itemIndex={index}
                   text={searchResult}
-                  searchWord={searchWord}
-                  isFocus={currentIndex === index}
-                  onMouseOverItem={() => changeIndex(index)}
-                  onMouseLeaveItem={() => initIndex()}
-                  onClickItem={() => {
-                    setSearchWord(searchResult);
-                    setIsAutoCompleteOpen(false);
-                  }}
+                  isFocus={autoCompleteIndex === index}
                 />
               );
-            })}
-          {isLoading && <div>Loading...</div>}
+            })
+          ) : (
+            <p>No Result...</p>
+          )}
         </ul>
       )}
+      {isLoading && <RxDotsHorizontal />}
     </div>
   );
 };

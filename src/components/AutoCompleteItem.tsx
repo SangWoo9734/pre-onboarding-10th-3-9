@@ -1,34 +1,27 @@
 import { useState } from 'react';
 import '../style/AutoCompleteItem.css';
+import { useSearchDispatch, useSearchState } from '../context/SearchContext';
 
 interface Props {
+  itemIndex: number;
   text: string;
-  searchWord: string;
   isFocus: boolean;
-  onMouseOverItem: () => void;
-  onMouseLeaveItem: () => void;
-  onClickItem: () => void;
 }
 
-const AutoCompleteItem = ({
-  text,
-  searchWord,
-  isFocus,
-  onMouseOverItem,
-  onMouseLeaveItem,
-  onClickItem,
-}: Props) => {
+const AutoCompleteItem = ({ text, isFocus, itemIndex }: Props) => {
+  const { userInput } = useSearchState();
+  const { onChangeUserInput, onActivateAutoCompleteItem } = useSearchDispatch();
   const [isActive, setIsActive] = useState<boolean>(false);
 
   const highlightedWord = () => {
-    const slicedText: string[] = text.split(searchWord);
+    const slicedText: string[] = text.split(userInput);
 
     return (
       <span>
         {slicedText.map((word, index) => {
           return (
             <span key={word}>
-              {index !== 0 && <span className="highlighted">{searchWord}</span>}
+              {index !== 0 && <span className="highlighted">{userInput}</span>}
               {word}
             </span>
           );
@@ -37,9 +30,9 @@ const AutoCompleteItem = ({
     );
   };
 
-  const activeSearchWord = () => {
-    onClickItem();
-    setIsActive(true);
+  const triggerSearchWord = () => {
+    if (isActive) onChangeUserInput(text);
+    setIsActive(!isActive);
   };
 
   return (
@@ -48,10 +41,14 @@ const AutoCompleteItem = ({
       className={`auto-complete-item ${isFocus ? 'focused-item' : ''} ${
         isActive ? 'actived-item' : ''
       }`}
-      onMouseEnter={onMouseOverItem}
-      onMouseLeave={onMouseLeaveItem}
-      onKeyDown={activeSearchWord}
-      onClick={activeSearchWord}
+      onMouseOver={() => onActivateAutoCompleteItem(itemIndex)}
+      onMouseLeave={() => onActivateAutoCompleteItem(itemIndex)}
+      onMouseDown={triggerSearchWord}
+      onMouseUp={triggerSearchWord}
+      onKeyDown={triggerSearchWord}
+      onFocus={() => {
+        onActivateAutoCompleteItem(itemIndex);
+      }}
     >
       {highlightedWord()}
     </li>
