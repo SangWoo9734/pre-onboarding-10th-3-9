@@ -3,14 +3,13 @@ import TodoItem from './TodoItem';
 
 interface Props {
   todos: TodoType[];
-  setTodos: React.Dispatch<React.SetStateAction<TodoType[]>>;
 }
 
-const TodoList = ({ todos, setTodos }: Props) => {
+const TodoList = ({ todos }: Props) => {
   return todos.length ? (
     <ul>
       {todos.map(({ id, title }: TodoType) => (
-        <TodoItem key={id} id={id} title={title} setTodos={setTodos} />
+        <TodoItem key={id} id={id} title={title} />
       ))}
     </ul>
   ) : (

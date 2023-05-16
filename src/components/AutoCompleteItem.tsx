@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import '../style/AutoCompleteItem.css';
 import { useSearchDispatch, useSearchState } from '../context/SearchContext';
+import useTodo from '../hooks/useTodo';
 
 interface Props {
   itemIndex: number;
@@ -10,7 +11,8 @@ interface Props {
 
 const AutoCompleteItem = ({ text, isFocus, itemIndex }: Props) => {
   const { userInput } = useSearchState();
-  const { onChangeUserInput, onActivateAutoCompleteItem } = useSearchDispatch();
+  const { onActivateAutoCompleteItem } = useSearchDispatch();
+  const { submitTodo } = useTodo();
   const [isActive, setIsActive] = useState<boolean>(false);
 
   const highlightedWord = () => {
@@ -31,7 +33,7 @@ const AutoCompleteItem = ({ text, isFocus, itemIndex }: Props) => {
   };
 
   const triggerSearchWord = () => {
-    if (isActive) onChangeUserInput(text);
+    if (isActive) submitTodo(text);
     setIsActive(!isActive);
   };
 
